@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/reset.css">
+    <script src="./static/js/common.js"></script>
+    <script src="https://openlayers.org/en/v5.3.0/build/ol.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <title>同测联行开票申请</title>
+    <style>
+      .van-checkbox-group {
+        font-size: 20px;
+      }
+      .van-icon{
+        font-size: 16px;
+      }
+    </style>
+    <script>
+      let toThousands = function (num = 0, text) {
+			let value = num.toString().replace(/\d+/, function (n) {
+				let value = n.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+				return value;
+			});
+			// 如果是整数，保留.00
+			if (value.indexOf('.') < 0) {
+				value = value + '.00';
+			}
+			return value;
+		}
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+
+</html>
