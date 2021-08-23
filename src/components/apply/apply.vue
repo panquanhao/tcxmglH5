@@ -41,6 +41,10 @@
             <div><input type="text"  placeholder="请输入" v-model="reason"  :disabled='editJudge'></div>
         </div>
         <div class="item">
+            <span>开票备注</span>
+            <div><input type="text"  placeholder="请输入" v-model="remarks"  :disabled='editJudge'></div>
+        </div>
+        <div class="item">
             <span>申请日期</span>
             <div @click="timeSelect"><input type="text" disabled  placeholder="请选择" v-model="time1"></div>
         </div>
@@ -91,6 +95,7 @@ return {
     centent:'',
     money:'',
     reason:'',
+    remarks:'',
     detail:{
         id:'',
         jfgs:'',
@@ -98,7 +103,8 @@ return {
         nssbh:'',
         khyh:'',
         yhzh:'',
-        jfgsId:''
+        jfgsId:'',
+        remarks:''
     },
     typeList:[],
     fpId:'',
@@ -124,6 +130,7 @@ created() {
         console.log(err)
     })
     this.detail.id=this.$route.query.id
+    console.log(this.$route.query)
     if(this.$route.query.fpId){
         let a=this.$route.query.time.split('/')
         this.judge=true
@@ -133,6 +140,7 @@ created() {
         this.centent=this.$route.query.content
         this.reason=this.$route.query.reason
         this.time1=this.$route.query.time
+        this.remarks=this.$route.query.remarks
         this.currentDate=new Date(a[0]*1,a[1]*1-1,a[2]*1)
         if(this.$route.query.state!=1){
             this.editJudge=true
@@ -201,7 +209,8 @@ methods: {
             application_time:+new Date(this.currentDate)/1000,
             type:0,
             id:0,
-            finance_id:this.detail.finance_id
+            finance_id:this.detail.finance_id,
+            remarks:this.remarks
         }
         if(this.judge){
             data.id=this.fpId

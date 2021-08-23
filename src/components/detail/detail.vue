@@ -20,6 +20,12 @@
         <div class="item">
             <span>付款次数</span> <div>{{detail.num}}</div>
         </div>
+        <div class="item">
+            <span>合同附件</span> 
+            <div>
+                <div v-for="(i,k) in detail.fj" :key="k" @click="download(i.id)">{{i.name}}</div>
+            </div>
+        </div>
     </div>
     <div class="bottom">
         <div class="bt">
@@ -48,6 +54,10 @@
                 <div class="tabItem">
                     <span>开票理由</span>
                     <div>{{i.reason}}</div>
+                </div>
+                <div class="tabItem">
+                    <span>开票备注</span>
+                    <div>{{i.remarks}}</div>
                 </div>
                 <div class="tabItem">
                     <span>申请日期</span>
@@ -89,6 +99,7 @@
 <script>
 import api from '../../api/api'
 import Qs from 'qs'
+import md5 from 'js-md5';
 export default {
 name:'',
 data() {
@@ -104,7 +115,8 @@ return {
         jfgs:'',
         num:'',
         money:0,
-        scfzr:''
+        scfzr:'',
+        fj:[]
     }
 }
 },
@@ -131,6 +143,7 @@ created() {
             this.detail.num=res.ret.payments_num
             this.detail.jfgs=res.ret.customer.name
             this.detail.scfzr=res.ret.marketing_director
+            this.detail.fj=res.ret.file
         }
     }).catch((err)=>{
         console.log(err)
@@ -207,7 +220,8 @@ methods: {
                 content:i.content,
                 fpId:i.id,
                 reason:i.reason,
-                state:i.state
+                state:i.state,
+                remarks:i.remarks
             }
         })
     },
@@ -239,6 +253,7 @@ methods: {
                         child:[],
                         judge:false,
                         state:0,//1。未开始，2.已开票未到账，3已开票有到账，4完成,5.作废
+                        remarks:res.ret.list[i].remarks
                     }
                     if(this.tabNum==1){
                         obj.state=1
@@ -253,6 +268,8 @@ methods: {
                             fpse:toThousands(res.ret.list[i].invoice_info[j].tax_amount/100),
                             kprq:this.getLocalTime(res.ret.list[i].invoice_info[j].invoice_time*1000),
                             dzrq:this.getLocalTime(res.ret.list[i].invoice_info[j].received_time*1000),
+                            
+                            
                         }
                         if(res.ret.list[i].invoice_info[j].received_time*1000>0){
                             obj.state=3
@@ -291,6 +308,16 @@ methods: {
       }
       
       // return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');     
+    },
+    download(id){
+      let baseUrl = api.projectDownFill();
+      var Base64 = require('js-base64').Base64;
+      let str=Base64.encode(`id=${id}`)
+    //   console.log(str)
+      let a=md5(baseUrl+`?`+str)
+    //   console.log(a)
+      let pdfUrl=`${baseUrl}?id=${id}&sign=${a}`;
+      window.location.href = pdfUrl; 
     },
 }
 }

@@ -20,6 +20,9 @@ export default{
   detail(){//详情
     return baseUrl+'mobile/project/info'
   },
+  projectDownFill(){//文件下载
+    return baseUrl+'contract/project/getFile'
+},
   config(){//配置参数
     return baseUrl+'mobile/invoice/init'
   },
