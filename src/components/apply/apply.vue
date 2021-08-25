@@ -130,7 +130,7 @@ created() {
         console.log(err)
     })
     this.detail.id=this.$route.query.id
-    console.log(this.$route.query)
+    // console.log(this.$route.query)
     if(this.$route.query.fpId){
         let a=this.$route.query.time.split('/')
         this.judge=true
@@ -200,6 +200,10 @@ methods: {
         this.time1=this.getLocalTime(this.time)
     },
     commit(){
+        if(this.centent==''){
+            this.$toast.success('开票内容必填');
+            return
+        }
         let data={
             project_id:this.detail.id,
             customer_id:this.detail.jfgsId,

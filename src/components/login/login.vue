@@ -24,8 +24,8 @@
         name: "login",
         data(){
             return{
-                pwd:'a123456',
-                user:'pan123',
+                pwd:'',
+                user:'',
                 back:{
                   backgroundImage:"url(" + require("../../../static/image/background.png") + ")"
               },
