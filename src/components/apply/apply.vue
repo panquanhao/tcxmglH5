@@ -4,11 +4,11 @@
     <div class="center">
         <div class="cItem">
             <span>甲方公司</span>
-            <div>{{detail.jfgs}}</div>
+            <div @click="jfSelect">{{detail.jfgs}}</div>
         </div>
         <div class="cItem">
             <span>发票抬头</span>
-            <div>{{detail.fptt}}</div>
+            <div @click="fpttSelect">{{detail.fptt}}</div>
         </div>
         <div class="cItem">
             <span>纳税识别号</span>
@@ -21,6 +21,10 @@
         <div class="cItem">
             <span>银行账号</span>
             <div>{{detail.yhzh}}</div>
+        </div>
+        <div class="cItem">
+            <span>联系人</span>
+            <div @click="lxrSelect">{{detail.lxr}}</div>
         </div>
     </div>
     <div class="bottom">
@@ -51,10 +55,10 @@
     </div>
     <div class="bt" v-show="!judge"><span @click="commit">提交申请</span></div>
     <div class="bt" v-show="judge"><span @click="commit">提交修改</span></div>
-    <div class="type" v-show="typeShow">
+    <div class="type" v-if="typeShow">
        <div class="typeBox">
             <van-picker
-            title="标题"
+            title="发票类型"
             show-toolbar
             :columns="columns"
             @confirm="typeEnd"
@@ -73,7 +77,39 @@
             />
        </div>
     </div>
-
+    <div class="type" v-if="jfShow">
+       <div class="typeBox">
+            <van-picker
+            title="甲方公司"
+            show-toolbar
+            :columns="jfList"
+            @confirm="jfEnd"
+            @cancel="jfCancel"
+            />
+       </div>
+    </div>
+    <div class="type" v-if="fpttShow">
+       <div class="typeBox">
+            <van-picker
+            title="发票抬头"
+            show-toolbar
+            :columns="fpttList"
+            @confirm="fpttEnd"
+            @cancel="fpttCancel"
+            />
+       </div>
+    </div>
+    <div class="type" v-if="lxrShow">
+       <div class="typeBox">
+            <van-picker
+            title="联系人"
+            show-toolbar
+            :columns="lxrList"
+            @confirm="lxrEnd"
+            @cancel="lxrCancel"
+            />
+       </div>
+    </div>
    
 </div>
 </template>
@@ -85,7 +121,17 @@ export default {
 name:'',
 data() {
 return {
-    columns: [],
+
+    jfList:[{values:[],defaultIndex:0}],
+    jfList1:[],
+    jfShow:false,
+    fpttList:[{values:[],defaultIndex:0}],//选择展示
+    fpttList1:1,//用来匹配
+    fpttShow:false,
+    lxrList:[{values:[],defaultIndex:0}],
+    lxrList1:[],
+    lxrShow:false,
+    columns: [{values:[],defaultIndex:0}],
     typeShow: false,
     timeShow:false,
     currentDate: new Date(),
@@ -99,12 +145,15 @@ return {
     detail:{
         id:'',
         jfgs:'',
+        jfgsId:'',
         fptt:'',
+        fpttId:'',
         nssbh:'',
         khyh:'',
         yhzh:'',
-        jfgsId:'',
-        remarks:''
+        remarks:'',
+        lxr:'',
+        lxrId:''
     },
     typeList:[],
     fpId:'',
@@ -123,12 +172,13 @@ created() {
                     name:res.ret.invoice_type[k]
                 }
                 this.typeList.push(obj)
-                this.columns.push(res.ret.invoice_type[k])
+                this.columns[0].values.push(res.ret.invoice_type[k])
             }
         }
     }).catch((err)=>{
         console.log(err)
     })
+    this.detail.id=this.$route.query.id
     this.detail.id=this.$route.query.id
     // console.log(this.$route.query)
     if(this.$route.query.fpId){
@@ -136,6 +186,7 @@ created() {
         this.judge=true
         this.fpId=this.$route.query.fpId
         this.type=this.$route.query.type==1?'普通发票':'增值税专用发票'
+        this.columns[0].defaultIndex=this.$route.query.type==1?0:1
         this.money=this.$route.query.amount1
         this.centent=this.$route.query.content
         this.reason=this.$route.query.reason
@@ -156,8 +207,12 @@ created() {
             this.detail.khyh=res.ret.customer.bank
             this.detail.yhzh=res.ret.customer.bank_account
             this.detail.jfgsId=res.ret.customer_id
-            this.detail.finance_id=res.ret.finance_id
+            this.detail.fpttId=res.ret.finance_id
+            this.detail.lxr=res.ret.customer.liaison
+            this.detail.lxrId=res.ret.liaison_id
         }
+    }).then(()=>{
+        this.httpGs()
     }).catch((err)=>{
         console.log(err)
     })
@@ -169,6 +224,106 @@ mounted() {
 },
 //方法
 methods: {
+    //发票抬头
+    fpttSelect(){
+        this.$http.get(api.applyFptt()+`?id=${this.detail.jfgsId}`).then((res)=>{
+            if(res.code==200){
+                this.fpttList1=res.ret.finance
+                this.fpttList[0].values=[]
+                for(var i=0;i<res.ret.finance.length;i++){
+                    this.fpttList[0].values.push(res.ret.finance[i].invoice_title)
+                    if(res.ret.finance[i].invoice_title==this.detail.fptt){
+                        this.fpttList[0].defaultIndex=i
+                    }
+                }
+                this.fpttShow=true
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+        
+    },
+    fpttEnd(picker, value, index){
+        // console.log(picker, value, index)
+        this.detail.fpttId=this.fpttList1[value[0]].id
+        this.detail.fptt=picker[0]
+        this.fpttList[0].defaultIndex=[0]
+        this.detail.nssbh=this.fpttList1[value[0]].no
+        this.detail.khyh=this.fpttList1[value[0]].bank
+        this.detail.yhzh=this.fpttList1[value[0]].bank_account
+        this.fpttShow=false
+    },
+    fpttCancel(){
+        this.fpttShow=false
+    },
+    //联系人
+    lxrSelect(){
+        this.$http.get(api.applyFptt()+`?id=${this.detail.jfgsId}`).then((res)=>{
+            if(res.code==200){
+                this.lxrList1=res.ret.liaison
+                this.lxrList[0].values=[]
+                for(var i=0;i<res.ret.liaison.length;i++){
+                    this.lxrList[0].values.push(res.ret.liaison[i].liaison)
+                    if(res.ret.liaison[i].liaison==this.detail.lxr){
+                        this.lxrList[0].defaultIndex=i
+                    }
+                }
+                this.lxrShow=true
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+        
+    },
+    lxrEnd(picker, value, index){
+        // console.log(picker, value, index)
+        this.detail.lxrId=this.lxrList1[value[0]].id
+        this.detail.lxr=picker[0]
+        this.fpttList[0].defaultIndex=[0]
+        this.lxrShow=false
+    },
+    lxrCancel(){
+        this.lxrShow=false
+    },
+    //甲方
+    jfSelect(){
+        this.jfShow=true
+    },
+    jfEnd(picker, value, index){
+        // console.log(picker, value, index)
+        this.detail.jfgsId=this.jfList1[value[0]].id
+        this.detail.jfgs=this.jfList1[value[0]].name
+        this.jfList[0].defaultIndex=value[0]
+        this.jfShow=false
+        this.$http.get(api.applyFptt()+`?id=${this.detail.jfgsId}`).then((res)=>{
+            if(res.code==200){
+                this.fpttList1=res.ret.finance
+                this.fpttList[0].defaultIndex=0
+                for(var i=0;i<res.ret.finance.length;i++){
+                    this.fpttList[0].values.push(res.ret.finance[i].invoice_title)
+                }
+                this.detail.fptt=res.ret.finance.length>0?res.ret.finance[0].invoice_title:''
+                this.detail.fpttId=res.ret.finance.length>0?res.ret.finance[0].id:''
+                this.detail.nssbh=res.ret.finance.length>0?res.ret.finance[0].no:''
+                this.detail.khyh=res.ret.finance.length>0?res.ret.finance[0].bank:''
+                this.detail.yhzh=res.ret.finance.length>0?res.ret.finance[0].bank_account:''
+
+                this.lxrList1=res.ret.liaison
+                this.lxrList[0].defaultIndex=0
+                for(var i=0;i<res.ret.liaison.length;i++){
+                    this.lxrList[0].values.push(res.ret.liaison[i].liaison)
+                }
+                this.detail.lxr=res.ret.liaison.length>0?res.ret.liaison[0].liaison:''
+                this.detail.lxrId=res.ret.liaison.length>0?res.ret.liaison[0].id:''
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+    },
+    jfCancel(){
+        this.jfShow=false
+    },
+    //类型
     typeSelect(){
         if(this.editJudge){
             return
@@ -213,8 +368,9 @@ methods: {
             application_time:+new Date(this.currentDate)/1000,
             type:0,
             id:0,
-            finance_id:this.detail.finance_id,
-            remarks:this.remarks
+            finance_id:this.detail.fpttId,
+            remarks:this.remarks,
+            liaison_id:this.detail.lxrId
         }
         if(this.judge){
             data.id=this.fpId
@@ -259,6 +415,22 @@ methods: {
       
       // return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');     
     },
+    httpGs(){
+        this.$http.get(api.applyGsList()).then((res)=>{
+            console.log(res)
+            if(res.code==200){
+                this.jfList1=res.ret
+                for(var i=0;i<res.ret.length;i++){
+                    this.jfList[0].values.push(res.ret[i].name)
+                    if(this.detail.jfgs==res.ret[i].name){
+                        this.jfList[0].defaultIndex=i
+                    }
+                }
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
 }
 }
 </script>
@@ -301,6 +473,7 @@ methods: {
       div
         width calc(100% - 1.7rem)  
         line-height 0.4rem
+        min-height 0.4rem
   .bottom
     margin-top 0.2rem
     padding 0  0.3rem

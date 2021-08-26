@@ -9,7 +9,7 @@ if(document.domain == '47.100.109.184'){
 }else{
   baseUrl='http://192.168.200.192/xmgl/backend/'
 }
-console.log(document.domain)
+// console.log(document.domain)
 export default{
   login(){//登录
     return baseUrl+'mobile/user/login'
@@ -33,7 +33,15 @@ export default{
     return baseUrl+'mobile/invoice/applyStore'
   },
   applyState(){//状态设置
-    console.log(1111111)
+    // console.log(1111111)
     return baseUrl+'mobile/invoice/applyState'
+  },
+  applyGsList(){//甲方公司列表
+    // console.log(1111111)
+    return baseUrl+'mobile/project/customer'
+  },
+  applyFptt(){//fptt
+    // console.log(1111111)
+    return baseUrl+'mobile/project/customerInfo'
   },
 }

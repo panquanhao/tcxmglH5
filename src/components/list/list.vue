@@ -92,7 +92,7 @@ mounted(){
     },
     httpList(bool){
       this.$http.get(api.list()+`?name=${this.searchValue}&page=${this.page}&perPage=14`).then((res)=>{
-       console.log(res)
+      //  console.log(res)
        if(res){
          if(res.code==200){
         //  if(this.page==0){

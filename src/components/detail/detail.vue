@@ -21,6 +21,9 @@
             <span>付款次数</span> <div>{{detail.num}}</div>
         </div>
         <div class="item">
+            <span>项目状态</span> <div>{{detail.state|filterState}}</div>
+        </div>
+        <div class="item">
             <span>合同附件</span> 
             <div>
                 <div v-for="(i,k) in detail.fj" :key="k" @click="download(i.id)">{{i.name}}</div>
@@ -116,7 +119,8 @@ return {
         num:'',
         money:0,
         scfzr:'',
-        fj:[]
+        fj:[],
+        state:''
     }
 }
 },
@@ -127,6 +131,15 @@ filters:{
           return  '普通发票'
         }else if(value==2){
           return  '增值税专用发票'
+        }
+	  },
+      filterState(value){
+	    if(value==1){
+          return  '进行中'
+        }else if(value==2){
+          return  '已完成'
+        }else if(value==2){
+          return  '终止'
         }
 	  }
 },
@@ -144,6 +157,7 @@ created() {
             this.detail.jfgs=res.ret.customer.name
             this.detail.scfzr=res.ret.marketing_director
             this.detail.fj=res.ret.file
+            this.detail.state=res.ret.state
         }
     }).catch((err)=>{
         console.log(err)
@@ -203,12 +217,14 @@ methods: {
         this.$router.push({
             path:`/apply`,
             query: {
-            id: that.detail.id
+            id: that.detail.id,
+            jfId:'',
+            fpttId:'',
           }
         })
     },
     edit(i){
-        console.log(i)
+        // console.log(i)
         let that=this
         this.$router.push({
             path:`/apply`,
@@ -221,7 +237,7 @@ methods: {
                 fpId:i.id,
                 reason:i.reason,
                 state:i.state,
-                remarks:i.remarks
+                remarks:i.remarks,
             }
         })
     },
