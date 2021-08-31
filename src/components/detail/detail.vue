@@ -73,12 +73,16 @@
                             <div>{{item.fph}}</div>
                         </div>
                         <div class="tabItem">
-                            <span>发票金额</span>
+                            <span>金额</span>
                             <div>{{item.fpje}}元</div>
                         </div>
                         <div class="tabItem">
-                            <span>发票税额</span>
+                            <span>税额</span>
                             <div>{{item.fpse}}元</div>
+                        </div>
+                        <div class="tabItem">
+                            <span>价税合计</span>
+                            <div>{{item.hj}}元</div>
                         </div>
                         <div class="tabItem">
                             <span>开票日期</span>
@@ -284,7 +288,7 @@ methods: {
                             fpse:toThousands(res.ret.list[i].invoice_info[j].tax_amount/100),
                             kprq:this.getLocalTime(res.ret.list[i].invoice_info[j].invoice_time*1000),
                             dzrq:this.getLocalTime(res.ret.list[i].invoice_info[j].received_time*1000),
-                            
+                            hj:toThousands((res.ret.list[i].invoice_info[j].tax_amount*1+res.ret.list[i].invoice_info[j].invoice_amount*1)/100)
                             
                         }
                         if(res.ret.list[i].invoice_info[j].received_time*1000>0){
@@ -426,6 +430,7 @@ methods: {
           div
             width calc(100% - 1.5rem)  
             padding 0.2rem 0
+            height 0.28rem
       .judge
         display flex
         align-items center

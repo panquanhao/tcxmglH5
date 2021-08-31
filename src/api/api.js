@@ -1,13 +1,15 @@
 let baseUrl
 // console.log(document.URL,document.URL.split('/'))
-if(document.domain == '47.100.109.184'){
-  if(window.location.port=='8081'){
-    baseUrl='http://47.100.109.184:8081/xmgl/backend/'
+if(document.domain == '47.100.44.176'){
+  if(window.location.port == '8081'){
+      baseUrl = 'http://47.100.89.170:8081/xmgl/backend/';
   }else{
-    baseUrl='http://47.100.109.184/xmgl/backend/'
+      baseUrl = 'http://47.100.89.170/xmgl/backend/';
   }
-}else{
-  baseUrl='http://192.168.200.192/xmgl/backend/'
+}else if(document.domain == '47.100.109.184'){
+  baseUrl = 'http://47.100.109.184/xmgl/backend/';
+}else {
+  baseUrl = 'http://192.168.200.192/xmgl/backend/';
 }
 // console.log(document.domain)
 export default{

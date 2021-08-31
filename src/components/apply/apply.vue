@@ -37,7 +37,7 @@
             <div><input type="text"  placeholder="请输入" v-model="money"></div>
         </div>
         <div class="item">
-            <span>开票内容</span>
+            <span>*开票内容</span>
             <div><input type="text"  placeholder="请输入" v-model="centent" :disabled='editJudge'></div>
         </div>
         <div class="item">
