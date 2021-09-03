@@ -69,7 +69,7 @@
                 <div v-show="i.judge">
                     <div v-for="(item,key) in i.child" :key="'a'+key">
                         <div class="tabItem">
-                            <span>发票1</span>
+                            <span>发票{{key+1}}</span>
                             <div>{{item.fph}}</div>
                         </div>
                         <div class="tabItem">
@@ -92,6 +92,7 @@
                             <span>到账日期</span>
                             <div>{{item.dzrq}}</div>
                         </div>
+                        <div class="br"></div>
                     </div>
                 </div>
                 <div v-show="!i.judge&&tabNum!=1" class="judge" @click="open(true,k)"><img src="../../../static/image/dowm.png"/>共{{i.child.length}}张</div>
@@ -142,7 +143,7 @@ filters:{
           return  '进行中'
         }else if(value==2){
           return  '已完成'
-        }else if(value==2){
+        }else if(value==3){
           return  '终止'
         }
 	  }
@@ -253,7 +254,9 @@ methods: {
         this.list[k].judge=bool
     },
     goBack(){
-        this.$router.go(-1)
+        this.$router.push({
+            path:`/list`,
+        })
     },
     httpList(type){
         this.$http.get(api.detailList()+`?id=${this.detail.id}&type=${this.tabNum}`).then((res)=>{
@@ -453,4 +456,8 @@ methods: {
         span
           margin-right 0.1rem
           color #3962E1
+.br
+  width 100%
+  border-bottom 1px solid #f2f2f2      
+  margin 0.1rem 0    
 </style>

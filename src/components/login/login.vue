@@ -44,6 +44,7 @@
                 var postData = Qs.stringify({name:this.user,pwd:this.pwd});
                 this.$http.post(api.login(),postData).then((res)=>{
                     // console.log(res,123)
+                    this.$toast.success(res.msg);
                     if(res.code==200){
                         that.$router.push({
                             path:`/list`
