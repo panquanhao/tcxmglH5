@@ -102,13 +102,12 @@ axios.interceptors.response.use(
   // 请求成功
   res => {
 
-    // if(res.data.code==200){
-    //    router.replace({
-    //     path: '/login',
-    //
-    //   });
-    //   return
-    // }
+    if(res.data.code==403){
+       router.replace({
+        path: '/login',
+      });
+      return
+    }
     let apikey=res.headers.apikey
     let a=apikey+key
     // console.log(apikey,res.headers.apisecret)

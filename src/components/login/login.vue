@@ -43,7 +43,7 @@
                 let that=this
                 var postData = Qs.stringify({name:this.user,pwd:this.pwd});
                 this.$http.post(api.login(),postData).then((res)=>{
-                    // console.log(res,123)
+                    console.log(res,123)
                     this.$toast.success(res.msg);
                     if(res.code==200){
                         that.$router.push({
@@ -51,6 +51,7 @@
                         })
                     }
                 }).catch((err)=>{
+                    this.$toast.fail('用户名或密码错误');
                     console.log(err,'错了')
                 })
             }

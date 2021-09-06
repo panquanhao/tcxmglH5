@@ -348,7 +348,7 @@ methods: {
         this.timeShow=false
     },
     timeEnd(value){
-        console.log(value)
+        // console.log(value)
         console.log(+new Date(value))
         this.timeShow=false
         this.time=+new Date(value)
@@ -417,7 +417,7 @@ methods: {
     },
     httpGs(){
         this.$http.get(api.applyGsList()).then((res)=>{
-            console.log(res)
+            // console.log(res)
             if(res.code==200){
                 this.jfList1=res.ret
                 for(var i=0;i<res.ret.length;i++){
