@@ -18,6 +18,9 @@
             <span>合同金额</span> <div>{{detail.money}}元</div>
         </div>
         <div class="item">
+            <span>分包成本</span> <div>{{detail.fbcb}}元</div>
+        </div>
+        <div class="item">
             <span>付款次数</span> <div>{{detail.num}}</div>
         </div>
         <div class="item">
@@ -72,6 +75,10 @@
                             <span>发票{{key+1}}</span>
                             <div>{{item.fph}}</div>
                         </div>
+                         <div class="tabItem">
+                            <span>价税合计</span>
+                            <div>{{item.hj}}元</div>
+                        </div>
                         <div class="tabItem">
                             <span>金额</span>
                             <div>{{item.fpje}}元</div>
@@ -80,10 +87,7 @@
                             <span>税额</span>
                             <div>{{item.fpse}}元</div>
                         </div>
-                        <div class="tabItem">
-                            <span>价税合计</span>
-                            <div>{{item.hj}}元</div>
-                        </div>
+                       
                         <div class="tabItem">
                             <span>开票日期</span>
                             <div>{{item.kprq}}</div>
@@ -125,7 +129,8 @@ return {
         money:0,
         scfzr:'',
         fj:[],
-        state:''
+        state:'',
+        fbcb:0
     }
 }
 },
@@ -158,6 +163,7 @@ created() {
             this.detail.no=res.ret.no
             this.detail.name=res.ret.name
             this.detail.money=toThousands(res.ret.contract_amount/100)
+            this.detail.fbcb=toThousands(res.ret.outsourcing_amount/100)
             this.detail.num=res.ret.payments_num
             this.detail.jfgs=res.ret.customer.name
             this.detail.scfzr=res.ret.marketing_director

@@ -8,7 +8,7 @@
         </div>
         <div class="cItem">
             <span>发票抬头</span>
-            <div @click="fpttSelect">{{detail.fptt}}</div>
+            <div @click="fpttSelect">{{detail.fptt}}<img src="../../../static/image/addto.png" @click.stop="addTt"/></div>
         </div>
         <div class="cItem">
             <span>纳税识别号</span>
@@ -220,10 +220,23 @@ created() {
 },
 //生命周期 - 挂载完成（访问DOM元素）
 mounted() {
+    var date = new Date();
+    let year=date .getFullYear()
+    let m=date .getMonth();
+    let d=date .getDate();
+    let str2=year+'/'+(m+1)+'/'+d
+    var date2 = new Date(str2).getTime()
     
+    this.time=date2
+    this.time1=this.getLocalTime(this.time)
+    console.log(this.time)
+    // this.
 },
 //方法
 methods: {
+    addTt(){
+        // alert(123)
+    },
     //发票抬头
     fpttSelect(){
         this.$http.get(api.applyFptt()+`?id=${this.detail.jfgsId}`).then((res)=>{
@@ -346,13 +359,14 @@ methods: {
     },
     timeCancel(value){
         this.timeShow=false
-    },
+    }, 
     timeEnd(value){
         // console.log(value)
-        console.log(+new Date(value))
+        console.log(value)
         this.timeShow=false
         this.time=+new Date(value)
         this.time1=this.getLocalTime(this.time)
+        console.log(this.time)
     },
     commit(){
         if(this.centent==''){
@@ -471,9 +485,16 @@ methods: {
       span    
         width 1.7rem
       div
-        width calc(100% - 1.7rem)  
+        width calc(100% - 2rem)  
         line-height 0.4rem
         min-height 0.4rem
+        position relative
+        img 
+          position absolute
+          right -0.3 rem
+          top 0
+          width 0.4rem
+          height 0.4rem
   .bottom
     margin-top 0.2rem
     padding 0  0.3rem

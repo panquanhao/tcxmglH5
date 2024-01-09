@@ -6,10 +6,18 @@ if(document.domain == '47.100.44.176'){
   }else{
       baseUrl = 'http://47.100.89.170/xmgl/backend/';
   }
+}else if(document.domain == 'www.tongceconsult.cn'){
+  if(window.location.port == '8081'){
+      baseUrl = 'https://api.tongceconsult.cn:8081/xmgl/backend/';
+  }else if(window.location.port == '8080'){
+      baseUrl = 'https://api.tongceconsult.cn:8080/xmgl/backend/';
+  }else {
+      baseUrl = 'https://api.tongceconsult.cn/xmgl/backend/';
+  }
 }else if(document.domain == '47.100.109.184'){
   baseUrl = 'http://47.100.109.184/xmgl/backend/';
 }else {
-  baseUrl = 'http://192.168.200.192/xmgl/backend/';
+  baseUrl = 'http://192.168.200.240/xmgl/backend/';
 }
 // console.log(document.domain)
 export default{
