@@ -39,7 +39,6 @@ router.beforeEach((to, from, next) => {
   // console.log(to,from,next)
   const ApiKey=window.localStorage.getItem('tcxmglH5-key');
   const secret=window.localStorage.getItem('tcxmglH5-secret');
-  // console.log(ApiKey,secret)
   if(ApiKey&&secret){
     next()
   }else if (!ApiKey&&!secret&&to.name!='login'){

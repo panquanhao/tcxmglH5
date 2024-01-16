@@ -20,6 +20,21 @@
 <script>
     import api from '../../api/api'
     import Qs from 'qs'
+    const CryptoJS = require('crypto-js');
+    let date = new Date()
+    let year = date.getFullYear();
+    
+    let month = date.getMonth() + 1;
+    
+    let day = date.getDate();
+    
+    month = (month > 9) ? month : ("0" + month);
+    day = (day < 10) ? ("0" + day) : day;
+    let today = year + '' + month + '' + day;
+    //16位十六进制数作为密钥（秘钥为随机生成，必须与后端保持一致！）
+    const key = CryptoJS.enc.Utf8.parse("eba75de20321eb1f");
+    //16位十六进制数作为密钥偏移量（秘钥为随机生成，必须与后端保持一致！）
+    const iv = CryptoJS.enc.Utf8.parse(today.split("").reverse().join('')+today);
     export default { 
         name: "login",
         data(){
@@ -41,8 +56,13 @@
               //           })
               //           return
                 let that=this
-                var postData = Qs.stringify({name:this.user,pwd:this.pwd});
-                this.$http.post(api.login(),postData).then((res)=>{
+                let Base64 = require('js-base64').Base64;
+                let str1=this.Encrypt(`${this.user} ${this.pwd}`)
+
+                let params = {
+                    pwd:Base64.encode(Base64.encode(`${str1}`).split("").reverse().join('')+'mm')
+                };
+                this.$http.post(api.login(),Qs.stringify(params)).then((res)=>{
                     console.log(res,123)
                     this.$toast.success(res.msg);
                     if(res.code==200){
@@ -54,7 +74,18 @@
                     this.$toast.fail('用户名或密码错误');
                     console.log(err,'错了')
                 })
-            }
+            },
+        Encrypt(word){
+            const srcs = CryptoJS.enc.Utf8.parse(word);
+            let encrypted = CryptoJS.AES.encrypt(srcs, key, {
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            
+            //将结果进行base64加密
+            return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+        }
         }
     }
 </script>

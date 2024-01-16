@@ -108,15 +108,47 @@ axios.interceptors.response.use(
       });
       return
     }
-    let apikey=res.headers.apikey
-    let a=apikey+key
-    // console.log(apikey,res.headers.apisecret)
-    localStorage.setItem("tcxmglH5-key",apikey)
-    localStorage.setItem("tcxmglH5-secret",res.headers.apisecret)
-    let apisecretArr=res.headers.apisecret.split('.')
-    // console.log(a,apisecretArr)
+		let postName = res.config.url.split('/');
+    if(postName[postName.length -1]=='login'){ 
+			let date = new Date()
+			let year = date.getFullYear();
+			let month = date.getMonth() + 1;
+			let day = date.getDate();
+			month = (month > 9) ? month : ("0" + month);
+			day = (day < 10) ? ("0" + day) : day;
+			let today = year + '' + month + '' + day;
+	  
+			let key = CryptoJS.enc.Utf8.parse("eba75de20321eb1f"); //为了避免补位，直接用16位的秘钥
+			let iv = CryptoJS.enc.Utf8.parse(today.split("").reverse().join('')+today); //16位初始向量
+			let  encrypted = CryptoJS.AES.decrypt(res.data.ret.id, key, {
+			  iv: iv,
+			  mode:CryptoJS.mode.CBC,
+			  padding:CryptoJS.pad.Pkcs7
+		
+			});
+			let aa=encrypted.toString(CryptoJS.enc.Utf8)
+			let f=aa.slice(0,(month*1+day*1)*2)+aa.slice((month*1+day*1)*2+64)
+			let c=Base64.decode(f)
+			localStorage.setItem("tcxmglH5-key", c);
+		}
+    // let apikey=res.headers.apikey
+    // let a=apikey+key
+    // // console.log(apikey,res.headers.apisecret)
+    // localStorage.setItem("tcxmglH5-key",apikey)
+    // localStorage.setItem("tcxmglH5-secret",res.headers.apisecret)
+    // let apisecretArr=res.headers.apisecret.split('.')
+    // // console.log(a,apisecretArr)
+    // var apssecret = apisecretArr[0]+'.'+apisecretArr[1];
+    // let b=CryptoJS.HmacSHA512(apssecret,a);
+    // var hashInBase64 = CryptoJS.enc.Base64.stringify(b).replace(/\//g,'_')
+    // let hash=hashInBase64.replace(/\+/g,'-')
+    let apikey = res.headers.apikey;
+    let a = apikey + localStorage.getItem('tcxmglH5-key');
+    localStorage.setItem("tcxmglH5-key", apikey);
+    localStorage.setItem("tcxmglH5-secret", res.headers.apisecret);
+    let apisecretArr = res.headers.apisecret.split('.');
     var apssecret = apisecretArr[0]+'.'+apisecretArr[1];
-    let b=CryptoJS.HmacSHA512(apssecret,a);
+    let b = CryptoJS.HmacSHA512(apssecret,a);
     var hashInBase64 = CryptoJS.enc.Base64.stringify(b).replace(/\//g,'_')
     let hash=hashInBase64.replace(/\+/g,'-')
     if(hash.substr(0, hash.length - 2)===apisecretArr[2]){
